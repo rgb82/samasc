@@ -39,18 +39,22 @@ try:
 
     # Fetch and save the 5 newest posts
     for submission in subreddit.new(limit=5):
-        # Extract the unique 7-character code from the URL
+        # Extract the unique timestamp as filename
         unique_id = submission.created_utc
-        filename = f'reddit_posts/{unique_id}.txt'
+        filename = f'reddit_posts/{unique_id}.html'
         
         if not os.path.exists(filename):
             with open(filename, 'w', encoding='utf-8') as file:
-                file.write(f"Title: {submission.title}\n\n")
-                file.write(f"URL: {submission.url}\n\n")
-                file.write(f"Score: {submission.score}\n\n")
-                file.write(f"Content:\n{submission.selftext}\n\n")
-                file.write(f"Timestamp: {submission.created_utc}\n")
-
+                file.write(f"""
+                <div class="post">
+                    <h2 class="title">{submission.title}</h2>
+                    <p class="url"><a href="{submission.url}" target="_blank">{submission.url}</a></p>
+                    <p class="score">Score: {submission.score}</p>
+                    <p class="content">{submission.selftext}</p>
+                    <p class="timestamp">Timestamp: {submission.created_utc}</p>
+                </div>
+                """)
 except Exception as e:
     with open('error_log.txt', 'a', encoding='utf-8') as file:
         file.write(f"An error occurred: {e}\n")
+
