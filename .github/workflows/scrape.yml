@@ -22,4 +22,4 @@ jobs:
       run: pip install praw
 
     - name: Run the script
-      run: python your_script.py
+      run: python main.py
