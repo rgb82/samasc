@@ -31,5 +31,5 @@ jobs:
         git config --global user.email "chathindun@gmail.com"  # Replace with your GitHub email
         git config --global user.name "ChathinduN"               # Replace with your GitHub username
         git add .
-        git commit -m "Add scraped files"
+        git commit -m "Add scraped files" || echo "No changes to commit"  # Prevent failure if no changes
         git push
