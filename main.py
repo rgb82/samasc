@@ -44,11 +44,16 @@ try:
         filename = f'reddit_posts/{unique_id}.html'
         
         if not os.path.exists(filename):
+            # Determine the URL to use
+            post_url = submission.url
+            if submission.url.endswith(('.jpg', '.jpeg', '.png', '.gif')):
+                post_url = f"https://www.reddit.com{submission.permalink}"
+
             with open(filename, 'w', encoding='utf-8') as file:
                 file.write(f"""
                 <div class="post">
                     <h2 class="title">{submission.title}</h2>
-                    <p class="url"><a href="{submission.url}" target="_blank">{submission.url}</a></p>
+                    <p class="url"><a href="{post_url}" target="_blank">{post_url}</a></p>
                     <p class="score">Score: {submission.score}</p>
                     <p class="content">{submission.selftext}</p>
                     <p class="timestamp">Timestamp: {submission.created_utc}</p>
@@ -57,4 +62,3 @@ try:
 except Exception as e:
     with open('error_log.txt', 'a', encoding='utf-8') as file:
         file.write(f"An error occurred: {e}\n")
-
