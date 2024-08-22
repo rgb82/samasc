@@ -1,6 +1,25 @@
 import praw
 import os
 import requests
+from datetime import datetime
+
+# Define a class to represent a Reddit post
+class RedditPost:
+    def __init__(self, title, url, score, content, timestamp):
+        self.title = title
+        self.url = url
+        self.score = score
+        self.content = content
+        self.timestamp = timestamp
+
+    def to_html(self):
+        return (f"<div class='post'>"
+                f"<h1 class='title'>Title: {self.title}</h1>"
+                f"<p class='url'><strong>URL:</strong> <a href='{self.url}'>{self.url}</a></p>"
+                f"<p class='score'><strong>Score:</strong> {self.score}</p>"
+                f"<p class='content'><strong>Content:</strong> {self.content}</p>"
+                f"<p class='timestamp'><strong>Timestamp:</strong> {datetime.utcfromtimestamp(self.timestamp).strftime('%Y-%m-%d %H:%M:%S')}</p>"
+                f"</div>")
 
 # Function to log rate limit data
 def log_rate_limits(headers):
@@ -39,17 +58,21 @@ try:
 
     # Fetch and save the 5 newest posts
     for submission in subreddit.new(limit=5):
-        # Extract the unique 7-character code from the URL
-        unique_id = submission.id
-        filename = f'reddit_posts/{unique_id}.txt'
+        # Create a RedditPost instance
+        post = RedditPost(
+            title=submission.title,
+            url=submission.url,
+            score=submission.score,
+            content=submission.selftext,
+            timestamp=submission.created_utc
+        )
+        
+        # Define file path
+        filename = f'reddit_posts/{submission.id}.html'
         
         if not os.path.exists(filename):
             with open(filename, 'w', encoding='utf-8') as file:
-                file.write(f"Title: {submission.title}\n\n")
-                file.write(f"URL: {submission.url}\n\n")
-                file.write(f"Score: {submission.score}\n\n")
-                file.write(f"Content:\n{submission.selftext}\n\n")
-                file.write(f"Timestamp: {submission.created_utc}\n")
+                file.write(post.to_html())
 
 except Exception as e:
     with open('error_log.txt', 'a', encoding='utf-8') as file:
