@@ -40,7 +40,7 @@ try:
     # Fetch and save the 5 newest posts
     for submission in subreddit.new(limit=5):
         # Extract the unique 7-character code from the URL
-        unique_id = submission.id
+        unique_id = submission.created_utc
         filename = f'reddit_posts/{unique_id}.txt'
         
         if not os.path.exists(filename):
