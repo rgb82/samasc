@@ -1,7 +1,6 @@
 import praw
 import os
 import requests
-from html import escape
 
 # Function to log rate limit data
 def log_rate_limits(headers):
@@ -24,7 +23,7 @@ try:
     )
 
     # Define the subreddit you want to monitor
-    subreddit_name = 'SouthAsianMasculinity'  # Replace with the subreddit of your choice
+    subreddit_name = 'SouthAsianMasculinity'
     subreddit = reddit.subreddit(subreddit_name)
 
     # Create a directory to store posts if it doesn't exist
@@ -45,19 +44,12 @@ try:
         filename = f'reddit_posts/{unique_id}.txt'
         
         if not os.path.exists(filename):
-            # Sanitize content to remove HTML tags and escape special characters
-            sanitized_title = escape(submission.title)
-            sanitized_url = escape(submission.url)
-            sanitized_content = escape(submission.selftext)
-            sanitized_score = escape(str(submission.score))
-            sanitized_timestamp = escape(str(submission.created_utc))
-            
             with open(filename, 'w', encoding='utf-8') as file:
-                file.write(f"Title: {sanitized_title}\n\n")
-                file.write(f"URL: {sanitized_url}\n\n")
-                file.write(f"Score: {sanitized_score}\n\n")
-                file.write(f"Content:\n{sanitized_content}\n\n")
-                file.write(f"Timestamp: {sanitized_timestamp}\n")
+                file.write(f"Title: {submission.title}\n\n")
+                file.write(f"URL: {submission.url}\n\n")
+                file.write(f"Score: {submission.score}\n\n")
+                file.write(f"Content:\n{submission.selftext}\n\n")
+                file.write(f"Timestamp: {submission.created_utc}\n")
 
 except Exception as e:
     with open('error_log.txt', 'a', encoding='utf-8') as file:
