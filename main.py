@@ -44,10 +44,18 @@ try:
         filename = f'reddit_posts/{unique_id}.html'
         
         if not os.path.exists(filename):
-            # Determine the URL to use
-            post_url = submission.url
-            if submission.url.endswith(('.jpg', '.jpeg', '.png', '.gif')):
-                post_url = f"https://www.reddit.com{submission.permalink}"
+            # Always use the Reddit permalink as the post URL
+            post_url = f"https://www.reddit.com{submission.permalink}"
+
+            # Determine the content to display based on the post type
+            if submission.is_self:
+                content = submission.selftext
+            elif submission.url.endswith(('.jpg', '.jpeg', '.png', '.gif')):
+                content = f'<img src="{submission.url}" alt="{submission.title}"/>'
+            elif submission.url.endswith(('.mp4', '.gifv', '.webm')):
+                content = f'<video controls><source src="{submission.url}" type="video/mp4">Your browser does not support the video tag.</video>'
+            else:
+                content = f'<a href="{submission.url}" target="_blank">{submission.url}</a>'
 
             with open(filename, 'w', encoding='utf-8') as file:
                 file.write(f"""
@@ -55,7 +63,7 @@ try:
                     <h2 class="title">{submission.title}</h2>
                     <p class="url"><a href="{post_url}" target="_blank">{post_url}</a></p>
                     <p class="score">Score: {submission.score}</p>
-                    <p class="content">{submission.selftext}</p>
+                    <p class="content">{content}</p>
                     <p class="timestamp">Timestamp: {submission.created_utc}</p>
                 </div>
                 """)
