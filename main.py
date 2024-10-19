@@ -1,6 +1,7 @@
 import praw
 import os
 import requests
+import markdown2  # This library will convert markdown to HTML
 
 # Function to log rate limit data
 def log_rate_limits(headers):
@@ -49,7 +50,8 @@ try:
 
             # Determine the content to display based on the post type
             if submission.is_self:
-                content = submission.selftext
+                # Convert markdown to HTML using markdown2
+                content = markdown2.markdown(submission.selftext)
             elif submission.url.endswith(('.jpg', '.jpeg', '.png', '.gif')):
                 content = f'<img src="{submission.url}" alt="{submission.title}"/>'
             elif submission.url.endswith(('.mp4', '.gifv', '.webm')):
@@ -57,16 +59,18 @@ try:
             else:
                 content = f'<a href="{submission.url}" target="_blank">{submission.url}</a>'
 
+            # Write the post content, including the poster's username
             with open(filename, 'w', encoding='utf-8') as file:
                 file.write(f"""
                 <div class="post">
                     <h2 class="title">{submission.title}</h2>
+                    <p class="author">Posted by: {submission.author}</p>
                     <p class="url"><a href="{post_url}" target="_blank">{post_url}</a></p>
-                    <p class="score">Score: {submission.score}</p>
-                    <p class="content">{content}</p>
+                    <div class="content">{content}</div>
                     <p class="timestamp">Timestamp: {submission.created_utc}</p>
                 </div>
                 """)
+
 except Exception as e:
     with open('error_log.txt', 'a', encoding='utf-8') as file:
         file.write(f"An error occurred: {e}\n")
