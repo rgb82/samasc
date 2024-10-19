@@ -64,7 +64,7 @@ try:
                 file.write(f"""
                 <div class="post">
                     <h2 class="title"><a href="{post_url}" target="_blank">{submission.title}</a></h2>
-                    <p class="author">Posted by: {submission.author}</p>
+                    <p class="author">Posted by: <a href="https://reddit.com/u/{submission.author}>{submission.author}</a></p>
                     <div class="content">{content}</div>
                     <p class="timestamp" hidden>Timestamp: {submission.created_utc}</p>
                 </div>
