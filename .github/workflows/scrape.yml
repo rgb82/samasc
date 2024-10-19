@@ -19,7 +19,9 @@ jobs:
         python-version: '3.x'
 
     - name: Install dependencies
-      run: pip install praw  # Assuming you are using PRAW for Reddit scraping
+      run: |
+        pip install praw
+        pip install markdown2  # Install markdown2 for markdown to HTML conversion
 
     - name: Run the script
       run: python main.py  # Replace with your script's filename
